@@ -1,1 +1,6 @@
 __pycache__/
+mid_data/*
+*.ipynb
+*.job
+*.out
+img/*
