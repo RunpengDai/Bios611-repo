@@ -4,3 +4,4 @@ mid_data/*
 *.job
 *.out
 img/*
+experiments/*
