@@ -89,7 +89,7 @@ def gen_dataset(phenos, SNPs):
     all_SNPs = SNPs["Variant (VCF)"].tolist()
     print("Total SNP number:", len(all_SNPs))
     index = 0
-    if not os.path.exists("../mid_data/dataset.json"):
+    if not os.path.exists("../mid_data/dataset_col.json"):
         for pheno in tqdm(phenos):
             pheno_discription = process_GPT_result(pheno)
             related_SNPs = label_data[pheno]
@@ -99,7 +99,8 @@ def gen_dataset(phenos, SNPs):
                 dataset.append({
                     "instruction": PROMPT.instruction,
                     "input": "The discription of the brain region is: " + pheno_discription + "The discription of the mutation is: " + SNP_discription,
-                    "output": "Yes"
+                    "output": "Yes",
+                    "id": index
                 })
 
             for SNP in unrelated_SNPs:
@@ -107,16 +108,17 @@ def gen_dataset(phenos, SNPs):
                 dataset.append({
                     "instruction": PROMPT.instruction,
                     "input": "The discription of the brain region is: " + pheno_discription + "The discription of the mutation is: " + SNP_discription,
-                    "output": "No"
+                    "output": "No",
+                    "id": index
                 })
             index += 1
         random.shuffle(dataset)
         print("Dataset size:", len(dataset))
-        with open("../mid_data/dataset.json", "w") as f:
+        with open("../mid_data/dataset_col.json", "w") as f:
             json.dump(dataset, f)
     else:
         print("Dataset already exists.")
-        with open('../mid_data/dataset.json', 'r') as f:
+        with open('../mid_data/dataset_col.json', 'r') as f:
             dataset = json.load(f)
         print("Dataset size:", len(dataset))
 
