@@ -12,30 +12,38 @@ from utils.prompter import Prompter
 
 if torch.cuda.is_available():
     device = "cuda"
+    torch_type = torch.float16
 else:
     device = "cpu"
+    torch_type = torch.float32
 
 
 
 def main(
     load_8bit: bool = False,
-    lora_weights: str = "meta_on_inputsFalse_r8_module2/checkpoint-200",
-    model_name = "meta"
+    lora_weights = None,
+    model_name = "meta7b",
+    text = "Geno-Pheno llama"
 ):
     base_model = DIR.base_model[model_name]
-    print(base_model)
+    if lora_weights is None:
+        text += " with base model {}".format(model_name)
+    else:
+        text += (" with LORA model " +lora_weights)
+    print(text)
     model = LlamaForCausalLM.from_pretrained(
         base_model,
         load_in_8bit=load_8bit,
-        torch_dtype=torch.float16,
+        torch_dtype=torch_type,
         device_map="auto",
     )
-
-    model = PeftModel.from_pretrained(
-        model,
-        lora_weights,
-        torch_dtype=torch.float16,
-    )
+    if lora_weights is not None:
+        text+= " with base model"
+        model = PeftModel.from_pretrained(
+            model,
+            lora_weights,
+            torch_dtype=torch_type,
+        )
 
     prompter = Prompter(PROMPT.tamplate_name)
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
@@ -45,12 +53,12 @@ def main(
         model.config.pad_token_id = tokenizer.pad_token_id = 0  # same as unk token id
         model.config.bos_token_id = tokenizer.bos_token_id = 1
         model.config.eos_token_id = tokenizer.eos_token_id = 2
-    elif model_name == "meta":
+    elif model_name == "meta7b":
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
     
 
-    if not load_8bit:
+    if not load_8bit and device == "cuda":
         model.half()  # seems to fix bugs for some users.
     model.eval()
 
@@ -85,7 +93,8 @@ def main(
     num_beams = gr.components.Number(label="Number of Beams")
 
 
-    iface = gr.Interface(fn= evaluate, inputs=[instruction, input, temperature, num_beams, stopping], outputs="text")
+    iface = gr.Interface(fn= evaluate, inputs=[instruction, input, temperature, num_beams, stopping], outputs="text", title="Toy Gentype Phenotype llama",
+    description= text)
     iface.queue().launch(share=True)
 
 if __name__ == "__main__":

@@ -3,5 +3,8 @@ mid_data/*
 *.ipynb
 *.job
 *.out
+*out/
 img/*
-experiments/*
+experiments/
+meta*/
+.ipynb_checkpoints/ 

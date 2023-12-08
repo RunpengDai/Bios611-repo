@@ -34,9 +34,9 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 
-def train(model_name = "meta"):
+def train(model_name = "meta7b"):
     base_model = DIR.base_model[model_name]
-    output_dir = "./"+model_name+"_on_inputs{}_r{}_module{}".format(HYPER.train_on_inputs, LORA.r, len(LORA.modules))
+    output_dir = "./"+model_name+"{}_r{}_m{}".format(HYPER.train_on_inputs, LORA.r, len(LORA.modules))
 
 
     if int(os.environ.get("LOCAL_RANK", 0)) == 0:
@@ -66,7 +66,7 @@ def train(model_name = "meta"):
         model.config.pad_token_id = tokenizer.pad_token_id = 0  # same as unk token id
         model.config.bos_token_id = tokenizer.bos_token_id = 1
         model.config.eos_token_id = tokenizer.eos_token_id = 2
-    elif model_name == "meta":
+    elif model_name == "meta7b":
         tokenizer.pad_token_id = tokenizer.eos_token_id
 
     ### load data and tokenize the data
@@ -119,6 +119,7 @@ def train(model_name = "meta"):
             ]  # could be sped up, probably
         return tokenized_full_prompt
 
+
     data = load_dataset("json", data_files= DIR.json_data)
     if HYPER.val_set_size > 0:
         train_val = data["train"].train_test_split(
@@ -135,6 +136,7 @@ def train(model_name = "meta"):
         val_data = None
     
     print(data["train"])
+    print(train_data[0]["input_ids"])
 
 
 
@@ -162,8 +164,8 @@ def train(model_name = "meta"):
     evaluation_strategy="steps",
     save_safetensors=False,
     save_strategy="steps",
-    eval_steps=100 if HYPER.val_set_size > 0 else None,
-    save_steps=10,
+    eval_steps=200 if HYPER.val_set_size > 0 else None,
+    save_steps=100,
     output_dir=output_dir,
     save_total_limit=3,
     report_to="tensorboard")

@@ -4,13 +4,13 @@ DIR = edict()
 DIR.volume_gwas = '/proj/htzhu/UKB_GWAS/results/ukb_phase1and2_roi/'
 DIR.volume_gwas_name = 'ukb_roi_volume_may12_2019_phase1and2_{}_allchr_withA2.txt'
 
-DIR.base_model = {"meta":"/overflow/htzhu/runpeng/pretrained_models/meta_Llama_7Bhf", "decapoda":"/overflow/htzhu/runpeng/pretrained_models/decapoda_Llama_7Bhf"}
-DIR.json_data = "/nas/longleaf/home/runpeng/LLM/tweet/alpaca-bitcoin-sentiment-dataset.json"
+DIR.base_model = {"meta7b":"/overflow/htzhu/runpeng/pretrained_models/Llama-2-7b-hf", "decapoda":"/overflow/htzhu/runpeng/pretrained_models/decapoda_Llama_7Bhf"}
+DIR.json_data = "mid_data/dataset.json"
 DIR.output = "./weights"
 
 
 HYPER = edict()
-HYPER.cutoff_len = 516
+HYPER.cutoff_len = 5000
 HYPER.train_on_inputs = False
 HYPER.add_eos_token = True
 HYPER.val_set_size = 400
@@ -29,7 +29,7 @@ SNP.features = ["Variant (VCF)", "Chromosome", "Position", "Genecode Comprehensi
 
 
 PROMPT = edict()
-PROMPT.instruction = "Given the discription of a brain region and the features of a mutation, are these two related?"
+PROMPT.instruction = "Given the discription of a brain region and some features of a genetic mutation, are these two related?"
 PROMPT.tamplate_name = "alpaca"
 
 LORA = edict()

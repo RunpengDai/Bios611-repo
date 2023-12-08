@@ -4,6 +4,7 @@ import os
 import random
 import numpy as np
 import glob
+import re
 import pandas as pd
 from matplotlib import pyplot as plt 
 from tqdm import tqdm
@@ -77,11 +78,11 @@ def process_SNP_result(SNP, SNPs):
     """
     info = SNPs[SNPs["Variant (VCF)"] == SNP].to_numpy()[0]
     mutation = info[0].split("-")[-2] + "-" + info[0].split("-")[-1]
-    part1 = "Mutation {} happens on position {} of chromosome {}. This mutation region belongs to a {} gene and its Genecode Comprehensive Caregory is {}. ".format(mutation, info[2], info[1], info[-1], info[3])
+    part1 = "The genetic mutation {} happens on position {} of chromosome {}. This mutation region belongs to a {} gene and its Genecode Comprehensive Caregory is {}. ".format(mutation, info[2], info[1], info[-1], info[3])
     part2 = "The LINSIGHT score of this mutation is {}, where a higher score indicates more functionality. The GC content of this mutation is {}, and the CpG content is {}, which measures the percent of GC or CpG in the neighboring region of that mutation. ".format(info[5], info[6], info[7])
     part3 = "The priPhCons score of this mutation is {}, which measures the conservation of the mutation region across 100 vertebrate species. The mamPhyloP score of this mutation is {}, which measures the conservation of the mutation region across 35 mammalian species. The verPhyloP score of this mutation is {}, which measures the conservation of the mutation region across 5 primate species. ".format(info[8], info[9], info[10])
     part4 = "The DNase score of this mutation is {}, which measures the accessibility of the mutation region. The CADD RawScore of this mutation is {}, which measures the deleteriousness of the mutation. The Nucleotide Diversity of this mutation is {}, which measures the diversity of the mutation region. ".format(info[11], info[12], info[13])
-    passage = part1 + part2 + part3 + part4
+    passage = part1 + part2 + part3 
     return passage
 
 def gen_dataset(phenos, SNPs):
@@ -89,7 +90,7 @@ def gen_dataset(phenos, SNPs):
     all_SNPs = SNPs["Variant (VCF)"].tolist()
     print("Total SNP number:", len(all_SNPs))
     index = 0
-    if not os.path.exists("../mid_data/dataset_col.json"):
+    if not os.path.exists("../mid_data/dataset.json"):
         for pheno in tqdm(phenos):
             pheno_discription = process_GPT_result(pheno)
             related_SNPs = label_data[pheno]
@@ -98,27 +99,25 @@ def gen_dataset(phenos, SNPs):
                 SNP_discription = process_SNP_result(SNP, SNPs)
                 dataset.append({
                     "instruction": PROMPT.instruction,
-                    "input": "The discription of the brain region is: " + pheno_discription + "The discription of the mutation is: " + SNP_discription,
-                    "output": "Yes",
-                    "id": index
+                    "input": re.sub(' +', ' ', pheno_discription + SNP_discription),
+                    "output": "Yes they are related.",
                 })
 
             for SNP in unrelated_SNPs:
                 SNP_discription = process_SNP_result(SNP, SNPs)
                 dataset.append({
                     "instruction": PROMPT.instruction,
-                    "input": "The discription of the brain region is: " + pheno_discription + "The discription of the mutation is: " + SNP_discription,
-                    "output": "No",
-                    "id": index
+                    "input": re.sub(' +', ' ', pheno_discription + SNP_discription),
+                    "output": "No they are unrelated.",
                 })
             index += 1
         random.shuffle(dataset)
         print("Dataset size:", len(dataset))
-        with open("../mid_data/dataset_col.json", "w") as f:
+        with open("../mid_data/dataset.json", "w") as f:
             json.dump(dataset, f)
     else:
         print("Dataset already exists.")
-        with open('../mid_data/dataset_col.json', 'r') as f:
+        with open('../mid_data/dataset.json', 'r') as f:
             dataset = json.load(f)
         print("Dataset size:", len(dataset))
 
