@@ -17,3 +17,9 @@
      which prevents me from printing stuff during the training process
     - So I use a txt file to get the loss, label
     - It turns out that the loss is calculated within the Lamma2 model itself, which make sense because is a auto regressive. So still I don't know how the loss is computed.
+
+## 5. When loading the model using CPU, something like Half cannot be loaded without CUDA
+    - The CPU not allow float16, so I need to change the model to float32 when on CPU
+
+## 6. The saved LORA weight(adapter_model.bin) is empty. 
+    - If using alpaca code, either downgrade the transformers or delete some reloading code. https://github.com/tloen/alpaca-lora/issues/326 for downgrading, https://github.com/huggingface/peft/issues/286 for deleting some wrong code.
