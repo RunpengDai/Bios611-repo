@@ -1,7 +1,3 @@
-
-
-
-
 # Project organization:
 As the project is trying to build the relationship between SNP and brain traits. It helps to understand the data and the model in these two aspects.
 
@@ -31,14 +27,22 @@ docker run --rm -p 8787:8787 -it -v $(pwd):/home/project py /bin/bash
 ```
 where `/bin/bash` is required to start the container in the linux shell, otherwise it will start in python.
 
+## Generating the dataset
+This process is only used when you want to fine-tune the model yourself. If you want to use the fine-tuned model, skip this step.
+```bash
+make mid_data
+make dataset_files
+```
 ## Running the fine-tuned model with web interface
 
 While in the Docker container, run the following command to start the web interface.
 
+<mark>Warnings</mark>: I train and inference in the longleaf, which don't have docker. I build a docker and download it to my mac, however, my mac don't have enough RAM for loading the model and have weird bug about offloading the model. So the code may crash on your device...
+
 To use the fine-tuned model:
 
 ```bash
-python -u generate_web.py --lora_weights "meta7bTrue_r8_m2/checkpoint-400" --model decapoda --online True
+python -u generate_web.py --lora_weights "decapodaFalse_r8_m2/checkpoint-400" --model_name decapoda --online True
 ```
 In this repository, the fine-tuned model is limited to decapoda's model, and `decapodaFalse_r8_m2/checkpoint-400` `decapodaTrue_r8_m2/checkpoint-400`. True means training with both inputs and outputs and False means only training with outputs, where the inputs are musked when calculating the loss.
 
@@ -52,4 +56,10 @@ Then copy the public url and paste it in the browser to use the web interface.
 The interface should look like this:
 ![](md_img/example_web.png)
 When running on CPU, it may take ten minutes to get an output from the model. On GPU, it only take around 10 seconds.
+
 ## Generating the PDF report
+While in the Docker container, run the following command to generate the PDF report.
+
+```bash
+make report
+```

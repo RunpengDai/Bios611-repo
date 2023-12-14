@@ -4,6 +4,10 @@ DIR = edict()
 DIR.volume_gwas = '/proj/htzhu/UKB_GWAS/results/ukb_phase1and2_roi/'
 DIR.volume_gwas_name = 'ukb_roi_volume_may12_2019_phase1and2_{}_allchr_withA2.txt'
 
+
+
+
+
 DIR.base_model = {"meta7b":"/overflow/htzhu/runpeng/pretrained_models/Llama-2-7b-hf", "decapoda":"/overflow/htzhu/runpeng/pretrained_models/decapoda-research-llama-7b-hf"}
 DIR.online_model = {"meta7b":"meta-llama/Llama-2-7b-hf", "decapoda":"linhvu/decapoda-research-llama-7b-hf"}
 

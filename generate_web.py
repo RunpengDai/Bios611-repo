@@ -36,7 +36,7 @@ def main(
         base_model,
         load_in_8bit=load_8bit,
         torch_dtype=torch_type,
-        device_map="auto",
+        device_map="auto"
     )
     if lora_weights is not None:
         text+= " with base model"
