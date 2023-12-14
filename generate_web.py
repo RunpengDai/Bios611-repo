@@ -23,9 +23,10 @@ def main(
     load_8bit: bool = False,
     lora_weights = None,
     model_name = "meta7b",
-    text = "Geno-Pheno llama"
+    text = "Geno-Pheno llama",
+    online = False
 ):
-    base_model = DIR.base_model[model_name]
+    base_model = DIR.base_model[model_name] if not online else DIR.online_model[model_name]
     if lora_weights is None:
         text += " with base model {}".format(model_name)
     else:

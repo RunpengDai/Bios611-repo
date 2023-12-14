@@ -1,7 +1,6 @@
 __pycache__/
-mid_data/SNP*
-mid_data/dataset.json
-mid_data/volume*
+mid_data/*
+!mid_data/label_data.json
 *.ipynb
 *.job
 *.out
@@ -10,3 +9,4 @@ img/*
 experiments/
 meta*/
 .ipynb_checkpoints/ 
+generate.py
