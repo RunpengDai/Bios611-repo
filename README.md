@@ -37,7 +37,8 @@ make dataset_files
 
 While in the Docker container, run the following command to start the web interface.
 
-<mark>Warnings</mark>: I train and inference in the longleaf, which don't have docker. I build a docker and download it to my mac, however, my mac don't have enough RAM for loading the model and have weird bug about offloading the model. So the code may crash on your device...
+Warnings :broken_heart: 
+I train and inference in the longleaf, which don't have docker. I build a docker and download it to my mac, however, my mac don't have enough RAM for loading the model and have weird bug about offloading the model. So the code may crash on your device...
 
 To use the fine-tuned model:
 
